@@ -70,7 +70,11 @@ import camelCase from 'lodash/camelCase';
 import { useSettingsStore } from '@/stores/settings.store';
 import { useEvaluationStore } from '@/stores/evaluation.store.ee';
 import { useCalloutHelpers } from '@/composables/useCalloutHelpers';
-import { getAiTemplatesCallout, getPreBuiltAgentsCallout } from './utils';
+import {
+	getAiTemplatesCallout,
+	getPreBuiltAgentsCallout,
+	getPreBuiltAgentsCalloutLink,
+} from './utils';
 export interface NodeViewItemSection {
 	key: string;
 	title: string;
@@ -192,7 +196,7 @@ export function AIView(_nodes: SimplifiedNodeType[]): NodeView {
 
 	const callouts: NodeViewItem[] = !calloutHelpers.isPreBuiltAgentsCalloutVisible
 		? [getAiTemplatesCallout(aiTemplatesURL)]
-		: [getPreBuiltAgentsCallout()];
+		: [getPreBuiltAgentsCalloutLink()];
 
 	return {
 		value: AI_NODE_CREATOR_VIEW,

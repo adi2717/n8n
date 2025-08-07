@@ -697,6 +697,7 @@ export interface ViewItemProps {
 	icon: string;
 	tag?: NodeCreatorTag;
 	borderless?: boolean;
+	divider?: 'top' | 'bottom' | 'both';
 }
 export interface LabelItemProps {
 	key: string;

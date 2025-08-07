@@ -28,6 +28,7 @@ import {
 	prepareCommunityNodeDetailsViewStack,
 	transformNodeType,
 	getRootSearchCallouts,
+	getRootViewCallouts,
 	shouldShowCommunityNodeDetails,
 	getHumanInTheLoopActions,
 } from '../utils';
@@ -106,6 +107,11 @@ function getFilteredActions(
 }
 
 function onSelected(item: INodeCreateElement) {
+	if (item.key === 'pre-built-agents') {
+		void calloutHelpers.openPreBuiltAgentsTemplates();
+		return;
+	}
+
 	if (item.type === 'subcategory') {
 		const subcategoryKey = camelCase(item.properties.title);
 		const title = i18n.baseText(`nodeCreator.subcategoryNames.${subcategoryKey}` as BaseTextKey);
@@ -221,11 +227,7 @@ function onSelected(item: INodeCreateElement) {
 	}
 
 	if (item.type === 'link') {
-		if (item.key === 'pre-built-agents') {
-			void calloutHelpers.openPreBuiltAgentsTemplates();
-		} else {
-			window.open(item.properties.url, '_blank');
-		}
+		window.open(item.properties.url, '_blank');
 	}
 
 	if (item.type === 'openTemplate') {
@@ -274,11 +276,14 @@ function baseSubcategoriesFilter(item: INodeCreateElement): boolean {
 	return hasActions || !hasTriggerGroup;
 }
 
-const globalCallouts = computed<INodeCreateElement[]>(() =>
-	getRootSearchCallouts(activeViewStack.value.search ?? '', {
+const globalCallouts = computed<INodeCreateElement[]>(() => [
+	...getRootSearchCallouts(activeViewStack.value.search ?? '', {
 		isRagStarterCalloutVisible: calloutHelpers.isRagStarterCalloutVisible.value,
 	}),
-);
+	...getRootViewCallouts(activeViewStack.value.title, {
+		isPreBuiltAgentsCalloutVisible: calloutHelpers.isPreBuiltAgentsCalloutVisible.value,
+	}),
+]);
 
 function arrowLeft() {
 	popViewStack();

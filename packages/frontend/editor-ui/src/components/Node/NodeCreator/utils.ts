@@ -9,12 +9,16 @@ import type {
 	NodeFilterType,
 	OpenTemplateElement,
 	LinkCreateElement,
+	ViewCreateElement,
 } from '@/Interface';
 import {
 	AI_CATEGORY_AGENTS,
 	AI_CATEGORY_OTHER_TOOLS,
+	AI_CATEGORY_TOOLS,
 	AI_SUBCATEGORY,
 	AI_TRANSFORM_NODE_TYPE,
+	AI_CATEGORY_LANGUAGE_MODELS,
+	AI_CATEGORY_MEMORY,
 	CORE_NODES_CATEGORY,
 	DEFAULT_SUBCATEGORY,
 	DISCORD_NODE_TYPE,
@@ -328,16 +332,33 @@ export function getRagStarterCallout(): OpenTemplateElement {
 	};
 }
 
-export function getPreBuiltAgentsCallout(): LinkCreateElement {
+export function getPreBuiltAgentsCallout(): ViewCreateElement {
+	return {
+		key: 'pre-built-agents',
+		type: 'view',
+		properties: {
+			title: i18n.baseText('nodeCreator.preBuiltAgents.title'),
+			icon: 'box',
+			description: i18n.baseText('nodeCreator.preBuiltAgents.description'),
+			borderless: true,
+			tag: {
+				type: 'info',
+				text: i18n.baseText('nodeCreator.triggerHelperPanel.manualTriggerTag'),
+			},
+		},
+	};
+}
+
+export function getPreBuiltAgentsCalloutLink(): LinkCreateElement {
 	return {
 		key: 'pre-built-agents',
 		type: 'link',
 		properties: {
-			url: '',
 			key: 'pre-built-agents',
+			url: '',
 			title: i18n.baseText('nodeCreator.preBuiltAgents.title'),
-			description: i18n.baseText('nodeCreator.preBuiltAgents.description'),
 			icon: 'box',
+			description: i18n.baseText('nodeCreator.preBuiltAgents.description'),
 			tag: {
 				type: 'info',
 				text: i18n.baseText('nodeCreator.triggerHelperPanel.manualTriggerTag'),
@@ -370,6 +391,29 @@ export function getRootSearchCallouts(search: string, { isRagStarterCalloutVisib
 	const ragKeywords = ['rag', 'vec', 'know'];
 	if (isRagStarterCalloutVisible && ragKeywords.some((x) => search.toLowerCase().startsWith(x))) {
 		results.push(getRagStarterCallout());
+	}
+	return results;
+}
+
+export function getRootViewCallouts(
+	rootViewTitle: string,
+	{ isPreBuiltAgentsCalloutVisible = false } = {},
+) {
+	const title = rootViewTitle.toLowerCase();
+	const results: INodeCreateElement[] = [];
+
+	if (
+		isPreBuiltAgentsCalloutVisible &&
+		title.startsWith(AI_CATEGORY_LANGUAGE_MODELS.toLowerCase())
+	) {
+		results.push(getPreBuiltAgentsCalloutLink());
+	}
+
+	if (
+		isPreBuiltAgentsCalloutVisible &&
+		[AI_CATEGORY_MEMORY, AI_CATEGORY_TOOLS].some((s) => title.startsWith(s.toLowerCase()))
+	) {
+		results.push(getPreBuiltAgentsCallout());
 	}
 
 	return results;
