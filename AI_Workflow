@@ -1,0 +1,173 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1MG04QVuBXVZU69sSb1NRcyciggJ7a4ZawTKtX2YCpRI",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1MG04QVuBXVZU69sSb1NRcyciggJ7a4ZawTKtX2YCpRI/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -220
+      ],
+      "id": "526f1fd4-494c-4214-bc7f-314321c2ac01",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "x4J9JWao1jLAA5CY",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "=Generate a photorealistic image of a {{ $json['What kind of space do you want to decorate?'] }} that reflects a {{ $json['What vibe best describes your ideal room?'] }} style inspired by Indian Interior Designer Gauri Khan. Use a color palette based on {{ $json['Pick a color palette you\\'re drawn to:'] }} tones and ensure the space feels authentic to Indian homes. Use amenities like LED, Air conditionar, wardrobes. Also use minimal wall paintings and 1-2 wardrobes with minimal decors. Keep space clean with minimal ornaments. \n\nThe space should be styled to suit a {{ $json['Are you renting or do you own the space?'] }} lifestyle with a budget of {{ $json['What\\'s your estimated budget for changes?'] }}. Add appropriate furniture, lighting, and layout that fits the chosen budget and use-case.\n\nFollow Vastu principles — e.g.,\n1. Open space in the north-east.\n2. Soft lighting in the south-west\n3. Avoid clutter near the entrance.\n\nMake the room feel livable, spiritual, peaceful, and unique. Make sure the image is visually clean, modern, and well-lit with minimal antiques. \n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        220,
+        -300
+      ],
+      "id": "c1fd3b7d-4146-4b95-bcdb-bb30f1448ddb",
+      "name": "Generate an image",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "retryOnFail": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "K5bSmgAgWUx5ftRr",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Google Sheets Trigger').item.json.Email }}",
+        "subject": "Your Style is ready",
+        "message": "=Welcome to GrahGrahsti - Your personal home stylist. Please find the below image based on your quiz selection. ",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        -120
+      ],
+      "id": "3a612cfb-1fef-4b3c-8c1f-dcd9c5f8874d",
+      "name": "Send a message",
+      "webhookId": "2dc50d1f-cf06-4bd1-b81c-45686749ec90",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "SKJIrHF6G7r6KnRj",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        440,
+        -300
+      ],
+      "id": "da40ec13-cb94-49d2-8ca7-51052d88ac88",
+      "name": "Merge"
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": {
+    "node:Google Sheets Trigger": {
+      "documentId": "1MG04QVuBXVZU69sSb1NRcyciggJ7a4ZawTKtX2YCpRI",
+      "sheetId": 0,
+      "lastIndexChecked": 30
+    },
+    "node:Google Sheets Trigger1": {
+      "documentId": "1MG04QVuBXVZU69sSb1NRcyciggJ7a4ZawTKtX2YCpRI",
+      "sheetId": 0,
+      "lastIndexChecked": 11
+    }
+  },
+  "pinData": {},
+  "triggerCount": 1,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
