@@ -46,7 +46,6 @@ import type {
 	AnnotationVote,
 	ITaskData,
 	ISourceData,
-	INodeTypeNameVersion,
 } from 'n8n-workflow';
 import type { Version } from '@n8n/rest-api-client/api/versions';
 import type { Cloud, InstanceUsage } from '@n8n/rest-api-client/api/cloudPlans';

@@ -221,7 +221,11 @@ function onSelected(item: INodeCreateElement) {
 	}
 
 	if (item.type === 'link') {
-		window.open(item.properties.url, '_blank');
+		if (item.key === 'pre-built-agents') {
+			void calloutHelpers.openPreBuiltAgentsTemplates();
+		} else {
+			window.open(item.properties.url, '_blank');
+		}
 	}
 
 	if (item.type === 'openTemplate') {

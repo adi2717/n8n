@@ -69,10 +69,10 @@ export function useCalloutHelpers() {
 		return true;
 	});
 
-	const openPreBuiltAgentsTemplates = async () => {
+	const getPreBuiltAgentNodeCreatorItems = (): OpenTemplateElement[] => {
 		const templates = getPrebuiltAgents();
-		const items: INodeCreateElement[] = templates.map((template) => {
-			const item: OpenTemplateElement = {
+		return templates.map((template) => {
+			return {
 				key: template.template.meta.templateId,
 				type: 'openTemplate',
 				properties: {
@@ -88,9 +88,11 @@ export function useCalloutHelpers() {
 					}),
 				},
 			};
-
-			return item;
 		});
+	};
+
+	const openPreBuiltAgentsTemplates = async (resetStacks: boolean = false) => {
+		const items: INodeCreateElement[] = getPreBuiltAgentNodeCreatorItems();
 
 		ndvStore.setActiveNodeName(null);
 		nodeCreatorStore.setNodeCreatorState({
@@ -109,13 +111,13 @@ export function useCalloutHelpers() {
 				activeIndex: 0,
 				transitionDirection: 'in',
 				hasSearch: false,
-				preventBack: true,
+				preventBack: false,
 				items,
 				baselineItems: items,
 				mode: 'nodes',
 				hideActions: false,
 			},
-			{ resetStacks: true },
+			{ resetStacks },
 		);
 	};
 
@@ -176,6 +178,7 @@ export function useCalloutHelpers() {
 	return {
 		openRagStarterTemplate,
 		openPreBuiltAgentsTemplates,
+		getPreBuiltAgentNodeCreatorItems,
 		openSampleWorkflowTemplateById,
 		isRagStarterCalloutVisible,
 		isPreBuiltAgentsCalloutVisible,

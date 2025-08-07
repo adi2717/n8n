@@ -7,6 +7,8 @@ import type {
 	SectionCreateElement,
 	ActionTypeDescription,
 	NodeFilterType,
+	OpenTemplateElement,
+	LinkCreateElement,
 } from '@/Interface';
 import {
 	AI_CATEGORY_AGENTS,
@@ -28,10 +30,10 @@ import sortBy from 'lodash/sortBy';
 import * as changeCase from 'change-case';
 
 import { useSettingsStore } from '@/stores/settings.store';
+import { useNodeTypesStore } from '@/stores/nodeTypes.store';
 import { SEND_AND_WAIT_OPERATION } from 'n8n-workflow';
 import type { NodeIconSource } from '../../../utils/nodeIcon';
 import type { CommunityNodeDetails, ViewStack } from './composables/useViewStacks';
-import { useNodeTypesStore } from '../../../stores/nodeTypes.store';
 
 const COMMUNITY_NODE_TYPE_PREVIEW_TOKEN = '-preview';
 
@@ -308,27 +310,68 @@ export function prepareCommunityNodeDetailsViewStack(
 	};
 }
 
-export function getRootSearchCallouts(search: string, { isRagStarterCalloutVisible = false }) {
+export function getRagStarterCallout(): OpenTemplateElement {
+	return {
+		uuid: 'rag-starter-template',
+		key: 'rag-starter-template',
+		type: 'openTemplate',
+		properties: {
+			templateId: 'rag-starter-template',
+			title: i18n.baseText('nodeCreator.ragStarterTemplate.openTemplateItem.title'),
+			icon: 'database',
+			description: i18n.baseText('nodeCreator.ragStarterTemplate.openTemplateItem.description'),
+			tag: {
+				type: 'info',
+				text: i18n.baseText('nodeCreator.triggerHelperPanel.manualTriggerTag'),
+			},
+		},
+	};
+}
+
+export function getPreBuiltAgentsCallout(): LinkCreateElement {
+	return {
+		key: 'pre-built-agents',
+		type: 'link',
+		properties: {
+			url: '',
+			key: 'pre-built-agents',
+			title: i18n.baseText('nodeCreator.preBuiltAgents.title'),
+			description: i18n.baseText('nodeCreator.preBuiltAgents.description'),
+			icon: 'box',
+			tag: {
+				type: 'info',
+				text: i18n.baseText('nodeCreator.triggerHelperPanel.manualTriggerTag'),
+			},
+		},
+	};
+}
+
+export function getAiTemplatesCallout(aiTemplatesURL: string): LinkCreateElement {
+	return {
+		key: 'ai_templates_root',
+		type: 'link',
+		properties: {
+			title: i18n.baseText('nodeCreator.aiPanel.linkItem.title'),
+			icon: 'box-open',
+			description: i18n.baseText('nodeCreator.aiPanel.linkItem.description'),
+			key: 'ai_templates_root',
+			url: aiTemplatesURL,
+			tag: {
+				type: 'info',
+				text: i18n.baseText('nodeCreator.triggerHelperPanel.manualTriggerTag'),
+			},
+		},
+	};
+}
+
+export function getRootSearchCallouts(search: string, { isRagStarterCalloutVisible = false } = {}) {
 	const results: INodeCreateElement[] = [];
 
 	const ragKeywords = ['rag', 'vec', 'know'];
 	if (isRagStarterCalloutVisible && ragKeywords.some((x) => search.toLowerCase().startsWith(x))) {
-		results.push({
-			uuid: 'rag-starter-template',
-			key: 'rag-starter-template',
-			type: 'openTemplate',
-			properties: {
-				templateId: 'rag-starter-template',
-				title: i18n.baseText('nodeCreator.ragStarterTemplate.openTemplateItem.title'),
-				icon: 'database',
-				description: i18n.baseText('nodeCreator.ragStarterTemplate.openTemplateItem.description'),
-				tag: {
-					type: 'info',
-					text: i18n.baseText('nodeCreator.triggerHelperPanel.manualTriggerTag'),
-				},
-			},
-		});
+		results.push(getRagStarterCallout());
 	}
+
 	return results;
 }
 

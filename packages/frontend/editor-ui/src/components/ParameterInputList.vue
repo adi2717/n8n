@@ -441,7 +441,7 @@ function onCalloutAction(action: CalloutActionType) {
 	if (action === 'openRagStarterTemplate') {
 		openRagStarterTemplate(activeNode.value?.type);
 	} else if (action === 'openPreBuiltAgents') {
-		void openPreBuiltAgentsTemplates();
+		void openPreBuiltAgentsTemplates(true);
 	}
 }
 
