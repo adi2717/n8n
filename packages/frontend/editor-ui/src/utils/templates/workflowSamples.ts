@@ -1,4 +1,4 @@
-import { ApplicationError } from 'n8n-workflow';
+import { ApplicationError, type INodeTypeNameVersion } from 'n8n-workflow';
 import type { WorkflowDataWithTemplateId } from '@/Interface';
 import { isWorkflowDataWithTemplateId } from '@/utils/templates/typeGuards';
 
@@ -28,20 +28,88 @@ export const getRagStarterWorkflowJson = (): WorkflowDataWithTemplateId => {
 	return getWorkflowJson(ragStarterJson);
 };
 
-export const getPrebuiltAgents = (): WorkflowDataWithTemplateId[] => {
+interface PrebuiltAgentTemplate {
+	template: WorkflowDataWithTemplateId;
+	name: string;
+	description: string;
+	nodes: INodeTypeNameVersion[];
+}
+
+export const getPrebuiltAgents = (): PrebuiltAgentTemplate[] => {
 	return [
-		getWorkflowJson(emailTriageAgentWithGmailJson),
-		getWorkflowJson(jokeAgentWithHttpToolJson),
-		getWorkflowJson(knowledgeStoreAgentWithGoogleDriveJson),
-		getWorkflowJson(taskManagementAgentWithGoogleSheetsJson),
-		getWorkflowJson(voiceAssistantAgentWithTelegramAndGcalJson),
+		{
+			name: 'Voice assistant agent',
+			description: 'Personal AI assistant in Telegram, handling both text and voice messages.',
+			template: getWorkflowJson(voiceAssistantAgentWithTelegramAndGcalJson),
+			nodes: [
+				{
+					name: 'n8n-nodes-base.telegram',
+					version: 1.2,
+				},
+				{
+					name: 'n8n-nodes-base.googleCalendar',
+					version: 1.3,
+				},
+			],
+		},
+		{
+			name: 'Email triage agent',
+			description:
+				'Categorizes new, unread emails by analyzing their content and applying relevant labels.',
+			template: getWorkflowJson(emailTriageAgentWithGmailJson),
+			nodes: [
+				{
+					name: 'n8n-nodes-base.gmail',
+					version: 2.1,
+				},
+			],
+		},
+		{
+			name: 'Knowledge store agent',
+			description:
+				'Retrieve, analyze, and answer questions using documents uploaded to Google Drive.',
+			template: getWorkflowJson(knowledgeStoreAgentWithGoogleDriveJson),
+			nodes: [
+				{
+					name: 'n8n-nodes-base.googleDrive',
+					version: 3,
+				},
+			],
+		},
+		{
+			name: 'Task management agent',
+			description:
+				'Task management assistant that helps users create, view, update, and delete tasks.',
+			template: getWorkflowJson(taskManagementAgentWithGoogleSheetsJson),
+			nodes: [
+				{
+					name: 'n8n-nodes-base.googleSheets',
+					version: 4.7,
+				},
+			],
+		},
+		{
+			name: 'Joke agent',
+			description: 'Uses the Joke API via the HTTP tool to deliver fun, personalized jokes.',
+			template: getWorkflowJson(jokeAgentWithHttpToolJson),
+			nodes: [
+				{
+					name: 'n8n-nodes-base.httpRequest',
+					version: 4.2,
+				},
+			],
+		},
 	];
 };
 
 export const getSampleWorkflowByTemplateId = (
 	templateId: string,
 ): WorkflowDataWithTemplateId | undefined => {
-	const workflows = [getEasyAiWorkflowJson(), getRagStarterWorkflowJson(), ...getPrebuiltAgents()];
+	const workflows = [
+		getEasyAiWorkflowJson(),
+		getRagStarterWorkflowJson(),
+		...getPrebuiltAgents().map((agent) => agent.template),
+	];
 
 	return workflows.find((workflow) => workflow.meta.templateId === templateId);
 };

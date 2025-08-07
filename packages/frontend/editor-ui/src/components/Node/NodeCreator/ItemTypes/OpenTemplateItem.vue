@@ -9,15 +9,15 @@ defineProps<Props>();
 </script>
 
 <template>
-	<n8n-node-creator-node
+	<N8nNodeCreatorNode
 		:class="$style.creatorOpenTemplate"
 		:title="openTemplate.title"
-		:is-trigger="false"
 		:description="openTemplate.description"
 		:tag="openTemplate.tag"
 		:show-action-arrow="true"
+		:is-trigger="false"
 	>
-		<template #icon>
+		<template v-if="openTemplate.icon" #icon>
 			<n8n-node-icon
 				type="icon"
 				:name="openTemplate.icon"
@@ -26,7 +26,17 @@ defineProps<Props>();
 				:use-updated-icons="true"
 			/>
 		</template>
-	</n8n-node-creator-node>
+
+		<template v-if="openTemplate.nodes" #extraDetails>
+			<NodeIcon
+				v-for="node in openTemplate.nodes"
+				:key="node.name"
+				:node-type="node"
+				:size="16"
+				:show-tooltip="true"
+			/>
+		</template>
+	</N8nNodeCreatorNode>
 </template>
 
 <style lang="scss" module>

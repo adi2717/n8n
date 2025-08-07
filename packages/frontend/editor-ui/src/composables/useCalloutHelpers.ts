@@ -1,9 +1,14 @@
-import { computed } from 'vue';
+import { computed, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useTelemetry } from '@/composables/useTelemetry';
 import { useRootStore } from '@n8n/stores/useRootStore';
 import { useUsersStore } from '@/stores/users.store';
-import { PRE_BUILT_AGENTS_EXPERIMENT, PRE_BUILT_AGENTS_MODAL_KEY, VIEWS } from '@/constants';
+import {
+	NODE_CREATOR_OPEN_SOURCES,
+	PRE_BUILT_AGENTS_EXPERIMENT,
+	REGULAR_NODE_CREATOR_VIEW,
+	VIEWS,
+} from '@/constants';
 import {
 	getPrebuiltAgents,
 	getRagStarterWorkflowJson,
@@ -13,6 +18,11 @@ import { updateCurrentUserSettings } from '@/api/users';
 import { useWorkflowsStore } from '@/stores/workflows.store';
 import { usePostHog } from '@/stores/posthog.store';
 import { useUIStore } from '@/stores/ui.store';
+import { useNDVStore } from '@/stores/ndv.store';
+import { useNodeCreatorStore } from '@/stores/nodeCreator.store';
+import { useNodeTypesStore } from '@/stores/nodeTypes.store';
+import { useViewStacks } from '@/components/Node/NodeCreator/composables/useViewStacks';
+import type { INodeCreateElement, OpenTemplateElement } from '@/Interface';
 
 export function useCalloutHelpers() {
 	const route = useRoute();
@@ -23,6 +33,10 @@ export function useCalloutHelpers() {
 	const rootStore = useRootStore();
 	const workflowsStore = useWorkflowsStore();
 	const usersStore = useUsersStore();
+	const ndvStore = useNDVStore();
+	const nodeCreatorStore = useNodeCreatorStore();
+	const viewStacks = useViewStacks();
+	const nodeTypesStore = useNodeTypesStore();
 
 	const openRagStarterTemplate = (nodeType?: string) => {
 		telemetry.track('User clicked on RAG callout', {
@@ -55,8 +69,56 @@ export function useCalloutHelpers() {
 		return true;
 	});
 
-	const openPreBuiltAgentsModal = () => {
-		uiStore.openModal(PRE_BUILT_AGENTS_MODAL_KEY);
+	const openPreBuiltAgentsModal = async () => {
+		const templates = getPrebuiltAgents();
+		const items: INodeCreateElement[] = templates.map((template) => {
+			const item: OpenTemplateElement = {
+				key: template.template.meta.templateId,
+				type: 'openTemplate',
+				properties: {
+					templateId: template.template.meta.templateId,
+					title: template.name,
+					description: template.description,
+					nodes: template.nodes.flatMap((node) => {
+						const nodeType = nodeTypesStore.getNodeType(node.name, node.version);
+						if (!nodeType) {
+							return [];
+						}
+						return nodeType;
+					}),
+				},
+			};
+
+			return item;
+		});
+
+		ndvStore.setActiveNodeName(null);
+		nodeCreatorStore.setNodeCreatorState({
+			source: NODE_CREATOR_OPEN_SOURCES.TEMPLATES_CALLOUT,
+			createNodeActive: true,
+			nodeCreatorView: undefined,
+			connectionType: undefined,
+		});
+
+		await nextTick();
+
+		viewStacks.pushViewStack(
+			{
+				title: 'Pre-built Agents',
+				rootView: REGULAR_NODE_CREATOR_VIEW,
+				activeIndex: 0,
+				transitionDirection: 'in',
+				hasSearch: false,
+				preventBack: true,
+				items,
+				baselineItems: items,
+				mode: 'nodes',
+				hideActions: false,
+			},
+			{ resetStacks: true },
+		);
+
+		// uiStore.openModal(PRE_BUILT_AGENTS_MODAL_KEY);
 
 		// const templates = getPrebuiltAgents();
 
@@ -92,7 +154,7 @@ export function useCalloutHelpers() {
 
 	const isPreBuiltAgentsCalloutVisible = computed(() => {
 		const templates = getPrebuiltAgents();
-		const templateIds = templates.map((template) => template.meta.templateId);
+		const templateIds = templates.map((agent) => agent.template.meta.templateId);
 
 		const routeTemplateId = route.query.templateId;
 		const workflowObject = workflowsStore.workflowObject;

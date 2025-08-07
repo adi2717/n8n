@@ -46,6 +46,7 @@ import type {
 	AnnotationVote,
 	ITaskData,
 	ISourceData,
+	INodeTypeNameVersion,
 } from 'n8n-workflow';
 import type { Version } from '@n8n/rest-api-client/api/versions';
 import type { Cloud, InstanceUsage } from '@n8n/rest-api-client/api/cloudPlans';
@@ -715,7 +716,8 @@ export interface OpenTemplateItemProps {
 	templateId: string; // Template ID
 	title: string;
 	description: string;
-	icon: string;
+	nodes?: INodeTypeDescription[];
+	icon?: string;
 	tag?: NodeCreatorTag;
 }
 
@@ -989,7 +991,8 @@ export type NodeCreatorOpenSource =
 	| 'notice_error_message'
 	| 'add_node_button'
 	| 'add_evaluation_trigger_button'
-	| 'add_evaluation_node_button';
+	| 'add_evaluation_node_button'
+	| 'templates_callout';
 
 export interface INodeCreatorState {
 	itemsFilter: string;

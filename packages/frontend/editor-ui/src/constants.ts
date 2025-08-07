@@ -289,6 +289,7 @@ export const NODE_CREATOR_OPEN_SOURCES: Record<
 	CONTEXT_MENU: 'context_menu',
 	ADD_EVALUATION_NODE_BUTTON: 'add_evaluation_node_button',
 	ADD_EVALUATION_TRIGGER_BUTTON: 'add_evaluation_trigger_button',
+	TEMPLATES_CALLOUT: 'templates_callout',
 	'': '',
 };
 export const CORE_NODES_CATEGORY = 'Core Nodes';
