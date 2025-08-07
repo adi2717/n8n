@@ -90,7 +90,7 @@ const {
 	dismissCallout,
 	isCalloutDismissed,
 	openRagStarterTemplate,
-	openPreBuiltAgentsModal,
+	openPreBuiltAgentsTemplates,
 	isRagStarterCalloutVisible,
 	isPreBuiltAgentsCalloutVisible,
 } = useCalloutHelpers();
@@ -439,9 +439,9 @@ function isCalloutVisible(parameter: INodeProperties): boolean {
 
 function onCalloutAction(action: CalloutActionType) {
 	if (action === 'openRagStarterTemplate') {
-		openRagStarterTemplate(activeNode.value?.type ?? 'no active node');
+		openRagStarterTemplate(activeNode.value?.type);
 	} else if (action === 'openPreBuiltAgents') {
-		openPreBuiltAgentsModal();
+		void openPreBuiltAgentsTemplates();
 	}
 }
 

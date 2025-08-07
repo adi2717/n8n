@@ -86,7 +86,6 @@ export const FROM_AI_PARAMETERS_MODAL_KEY = 'fromAiParameters';
 export const WORKFLOW_EXTRACTION_NAME_MODAL_KEY = 'workflowExtractionName';
 export const WHATS_NEW_MODAL_KEY = 'whatsNew';
 export const WORKFLOW_DIFF_MODAL_KEY = 'workflowDiff';
-export const PRE_BUILT_AGENTS_MODAL_KEY = 'preBuiltAgents';
 
 export const COMMUNITY_PACKAGE_MANAGE_ACTIONS = {
 	UNINSTALL: 'uninstall',

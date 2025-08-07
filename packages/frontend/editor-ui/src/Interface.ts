@@ -713,7 +713,7 @@ export interface LinkItemProps {
 }
 
 export interface OpenTemplateItemProps {
-	templateId: string; // Template ID
+	templateId: string;
 	title: string;
 	description: string;
 	nodes?: INodeTypeDescription[];

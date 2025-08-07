@@ -44,7 +44,6 @@ import {
 	LOCAL_STORAGE_THEME,
 	WHATS_NEW_MODAL_KEY,
 	WORKFLOW_DIFF_MODAL_KEY,
-	PRE_BUILT_AGENTS_MODAL_KEY,
 } from '@/constants';
 import { STORES } from '@n8n/stores';
 import type {
@@ -128,7 +127,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 				IMPORT_WORKFLOW_URL_MODAL_KEY,
 				WHATS_NEW_MODAL_KEY,
 				WORKFLOW_DIFF_MODAL_KEY,
-				PRE_BUILT_AGENTS_MODAL_KEY,
 			].map((modalKey) => [modalKey, { open: false }]),
 		),
 		[DELETE_USER_MODAL_KEY]: {
@@ -220,9 +218,6 @@ export const useUIStore = defineStore(STORES.UI, () => {
 			data: {
 				articleId: undefined,
 			},
-		},
-		[PRE_BUILT_AGENTS_MODAL_KEY]: {
-			open: false,
 		},
 	});
 

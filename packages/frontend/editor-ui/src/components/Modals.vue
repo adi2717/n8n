@@ -26,7 +26,6 @@ import {
 	NEW_ASSISTANT_SESSION_MODAL,
 	NPS_SURVEY_MODAL_KEY,
 	PERSONALIZATION_MODAL_KEY,
-	PRE_BUILT_AGENTS_MODAL_KEY,
 	PROJECT_MOVE_RESOURCE_MODAL,
 	PROMPT_MFA_CODE_MODAL_KEY,
 	SETUP_CREDENTIALS_MODAL_KEY,
@@ -340,12 +339,6 @@ import DynamicModalLoader from './DynamicModalLoader.vue';
 		<ModalRoot :name="WHATS_NEW_MODAL_KEY">
 			<template #default="{ modalName, data }">
 				<WhatsNewModal :modal-name="modalName" :data="data" />
-			</template>
-		</ModalRoot>
-
-		<ModalRoot :name="PRE_BUILT_AGENTS_MODAL_KEY">
-			<template #default="{ modalName, data }">
-				<PreBuiltAgentsModal :modal-name="modalName" :data="data" />
 			</template>
 		</ModalRoot>
 
